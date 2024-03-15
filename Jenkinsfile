@@ -1,36 +1,43 @@
 pipeline {
     agent any
+    environment {
+        DOCKER_COMPOSE_VERSION = '1.29.2'
+    }
     stages {
-        stage('Install Dependencies') {
+        stage('Checkout') {
             steps {
-                // Install Python dependencies
-                sh 'pip install -r requirements.txt'
+                checkout scm
             }
         }
-        stage('Lint') {
+        stage('Build and Run Backend') {
             steps {
-                // Lint the Python code (optional)
-                sh 'flake8 .'
+                script {
+                    // Install Docker Compose (if not already installed)
+                    sh "curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose"
+                    sh 'chmod +x /usr/local/bin/docker-compose'
+
+                    // Build and run the backend Docker container
+                    sh 'docker-compose -f docker-compose.yml up -d --build'
+                }
             }
         }
-        stage('Test') {
+        stage('Test Backend') {
             steps {
-                // Run backend tests (e.g., using pytest)
-                sh 'pytest'
+                // Run backend tests if applicable
+                // Example: sh 'docker-compose -f docker-compose.backend.yml exec <backend_service_name> pytest'
             }
         }
         stage('Security Scan') {
             steps {
-             sh 'curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/main/deployments/scripts/install.sh | bash -s latest'
-             sh 'horusec start -p="./" -e="true"'
-            }
+            sh 'curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/main/deployments/scripts/install.sh | bash -s latest'
+            sh 'horusec start -p="./" -e="true"'
+          }
         }
-        stage('Deploy') {
-            steps {
-                // Deploy the backend code (e.g., to a server)
-                // Replace 'python deploy.py' with your actual deployment command
-                sh 'python deploy.py'
-            }
+    }
+    post {
+        always {
+            // Clean up backend Docker container after pipeline execution
+            sh 'docker-compose -f docker-compose.yml down'
         }
     }
 }
