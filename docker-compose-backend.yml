@@ -4,4 +4,4 @@ services:
     container_name: todo-fastapi-backend
     build: ./app
     ports:
-      - "8000:8000"
+      - "8082:8000"
