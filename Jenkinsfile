@@ -1,43 +1,31 @@
 pipeline {
     agent any
-    environment {
-        DOCKER_COMPOSE_VERSION = '1.29.2'
-    }
-    stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-        stage('Build and Run Backend') {
-            steps {
-                script {
-                    // Install Docker Compose (if not already installed)
-                    sh "curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose"
-                    sh 'chmod +x /usr/local/bin/docker-compose'
 
-                    // Build and run the backend Docker container
-                    sh 'docker-compose -f docker-compose.yml up -d --build'
+    stages {
+        stage('Build Backend') {
+            steps {
+                // Checkout backend repository
+                git branch: 'main', url: 'https://github.com/pveerrotwal/ToDoFastAPI-Backend.git'
+
+                // Build backend Docker image
+                script {
+                    docker.build('backend', '-f Dockerfile .')
                 }
             }
         }
-        stage('Test Backend') {
+
+        stage('Deploy Backend') {
             steps {
-                // Run backend tests if applicable
-                // Example: sh 'docker-compose -f docker-compose.backend.yml exec <backend_service_name> pytest'
+                // Deploy backend Docker containers using docker-compose-backend.yml
+                sh 'docker-compose -f docker-compose-backend.yml up -d'
             }
         }
-        stage('Security Scan') {
-            steps {
-            sh 'curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/main/deployments/scripts/install.sh | bash -s latest'
-            sh 'horusec start -p="./" -e="true"'
-          }
-        }
     }
+
     post {
         always {
-            // Clean up backend Docker container after pipeline execution
-            sh 'docker-compose -f docker-compose.yml down'
+            // Clean up Docker resources
+            sh 'docker-compose -f docker-compose-backend.yml down'
         }
     }
 }
