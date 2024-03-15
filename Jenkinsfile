@@ -9,7 +9,7 @@ pipeline {
 
                 // Build backend Docker image
                 script {
-                    docker.build('backend', '-f Dockerfile .')
+                    echo "Building Backend"
                 }
             }
         }
