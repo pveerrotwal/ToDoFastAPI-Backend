@@ -17,7 +17,7 @@ pipeline {
         stage('Deploy Backend') {
             steps {
                 // Deploy backend Docker containers using docker-compose-backend.yml
-                sh 'docker-compose -f docker-compose-backend.yml up -d'
+                sh 'docker compose up docker-compose-backend.yml'
             }
         }
       stage('Horusec Security Scan') {
