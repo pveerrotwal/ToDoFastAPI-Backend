@@ -23,7 +23,7 @@ pipeline {
       stage('Horusec Security Scan') {
         steps {
             sh 'curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/main/deployments/scripts/install.sh | bash -s latest'
-            sh 'horusec start -p . -a c578b8a3-d813-40a3-83ce-6a1924282747 --disable-docker="true"' 
+            sh 'horusec start -p . -a 1fa512fb-2342-4aca-b1d4-077d49daac22 --disable-docker="true"' 
         }
       }
     }
