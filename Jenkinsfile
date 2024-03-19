@@ -27,8 +27,7 @@ pipeline {
             sh 'horusec start -p="./" -a 48ae8779-4217-49a4-b443-93e1c2853163 --disable-docker="true"'
         }
     }
-      }
-    }
+}
 
     post {
         always {
