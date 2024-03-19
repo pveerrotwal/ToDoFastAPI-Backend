@@ -20,13 +20,19 @@ pipeline {
                 sh 'docker-compose -f docker-compose-backend.yml up -d'
             }
         }
-       stage('SonarQube analysis') {
-         def scannerHome = tool 'SonarScanner 4.0';
-         withSonarQubeEnv('SonarQubeServer') { // If you have configured more than one global server connection, you can specify its name
-         sh "${scannerHome}/bin/sonar-scanner"
-     }
-  }
-}
+
+        stage('SonarQube analysis') {
+            steps {
+                // Define SonarQube scanner home
+                def scannerHome = tool 'SonarScanner 4.0'
+
+                // Run SonarQube scanner
+                withSonarQubeEnv('SonarQubeServer') {
+                    sh "${scannerHome}/bin/sonar-scanner"
+                }
+            }
+        }
+    }
 
     post {
         always {
