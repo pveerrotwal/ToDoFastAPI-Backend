@@ -20,14 +20,15 @@ pipeline {
                 sh 'docker-compose -f docker-compose-backend.yml up -d'
             }
         }
-      stage('Horusec Scan') {
-            stage('Security') {
-        steps {
-            sh 'curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/main/deployments/scripts/install.sh | bash -s latest'
-            sh 'horusec start -p="./" -a 48ae8779-4217-49a4-b443-93e1c2853163 --disable-docker="true"'
+
+        stage('Horusec Scan') {
+            steps {
+                // Install Horusec and run the security scan
+                sh 'curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/main/deployments/scripts/install.sh | bash -s latest'
+                sh 'horusec start -p="./" -a 48ae8779421749a4b44393e1c2853163 --disable-docker="true"'
+            }
         }
     }
- }
 
     post {
         always {
@@ -35,5 +36,5 @@ pipeline {
             sh 'docker-compose -f docker-compose-backend.yml down'
         }
     }
-  }
 }
+
