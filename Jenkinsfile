@@ -20,14 +20,13 @@ pipeline {
                 sh 'docker-compose -f docker-compose-backend.yml up -d'
             }
         }
-      stage('SonarQube Analysis') {
-            steps {
-                // Run SonarQube analysis
-                sh "mvn clean package"
-                sh ''' mvn sonar:sonar -Dsonar.url=http://localhost:9000/ -Dsonar.login=squ_ccf888d69b058e716e7bb6a31ac0fade7d45852c -Dsonar.projectname=FastAPI \
-                -Dsonar.java.binaries=. \
-                -Dsonar.projectKey=FastAPI '''
-            }
+      stage('Horusec Scan') {
+            stage('Security') {
+        steps {
+            sh 'curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/main/deployments/scripts/install.sh | bash -s latest'
+            sh 'horusec start -p="./" -a 48ae8779-4217-49a4-b443-93e1c2853163 --disable-docker="true"'
+        }
+    }
       }
     }
 
