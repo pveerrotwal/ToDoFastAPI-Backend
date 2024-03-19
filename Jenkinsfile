@@ -23,12 +23,10 @@ pipeline {
       stage('SonarQube Analysis') {
             steps {
                 // Run SonarQube analysis
-                script {
-                    def scannerHome = tool 'SonarQubeScanner'
-                    withSonarQubeEnv('SonarQubeServer') {
-                        sh "${scannerHome}/bin/sonar-scanner"
-                    }
-                }
+                sh "mvn clean package"
+                sh ''' mvn sonar:sonar -Dsonar.url=http://localhost:9000/ -Dsonar.login=squ_ccf888d69b058e716e7bb6a31ac0fade7d45852c -Dsonar.projectname=FastAPI \
+                -Dsonar.java.binaries=. \
+                -Dsonar.projectKey=FastAPI '''
             }
       }
     }
