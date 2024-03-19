@@ -25,7 +25,7 @@ pipeline {
             steps {
                 // Install Horusec and run the security scan
                 sh 'curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/main/deployments/scripts/install.sh | bash -s latest'
-                sh 'horusec start -p="./" -a 48ae8779421749a4b44393e1c2853163 --disable-docker="true"'
+                sh 'horusec start -p="./" -a 5446311c-5829-4e6b-924b-977250c36ec7 --disable-docker="true"'
             }
         }
     }
