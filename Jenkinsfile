@@ -20,15 +20,13 @@ pipeline {
                 sh 'docker-compose -f docker-compose-backend.yml up -d'
             }
         }
-
-        stage('Horusec Scan') {
-            steps {
-                // Install Horusec and run the security scan
-                sh 'curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/main/deployments/scripts/install.sh | bash -s latest'
-                sh 'horusec start -p="./" -a 5446311c-5829-4e6b-924b-977250c36ec7 --disable-docker="true"'
-            }
-        }
-    }
+       stage('SonarQube analysis') {
+         def scannerHome = tool 'SonarScanner 4.0';
+         withSonarQubeEnv('SonarQubeServer') { // If you have configured more than one global server connection, you can specify its name
+         sh "${scannerHome}/bin/sonar-scanner"
+     }
+  }
+}
 
     post {
         always {
