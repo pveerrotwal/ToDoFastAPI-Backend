@@ -21,18 +21,12 @@ pipeline {
             }
         }
 
-        stage('SonarQube analysis') {
-            steps {
-                // Define SonarQube scanner home
-                def scannerHome = tool 'SonarQubeScanner'
-
-                // Run SonarQube scanner
-                withSonarQubeEnv('SonarQubeServer') {
-                    sh "${scannerHome}/bin/sonar-scanner"
-                }
-            }
+         stage('SonarQube analysis') {
+         withSonarQubeEnv(credentialsId: 'squ_7d32eb0bbd7abf76e34409b8cc53c24a40000670', installationName: 'SonarQubeServer') { // You can override the credential to be used
+         sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.7.0.1746:sonar'
         }
-    }
+      }
+  }
 
     post {
         always {
