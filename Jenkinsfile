@@ -21,14 +21,11 @@ pipeline {
             }
         }
 
-        stage("Sonarqube Analysis "){
-            steps{
-                withSonarQubeEnv('SonarQubeServer') {
-                    sh ''' $SCANNER_HOME/bin/SonarQubeScanner -Dsonar.url=http://localhost:9000/ -Dsonar.login=squ_7d32eb0bbd7abf76e34409b8cc53c24a40000670 -Dsonar.projectName=FastAPI-Jenkins \
-                    -Dsonar.python.binaries=app \
-                    -Dsonar.projectKey=FastAPI-Jenkins '''
-    
-                }
+        stage('Horusec Scan') {
+            steps {
+                // Install Horusec and run the security scan
+                sh 'curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/main/deployments/scripts/install.sh | bash -s latest'
+                sh 'horusec start -p="./" -a 5446311c-5829-4e6b-924b-977250c36ec7 --disable-docker="true"'
             }
         }
     }
@@ -40,4 +37,3 @@ pipeline {
         }
     }
 }
-
