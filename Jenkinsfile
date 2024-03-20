@@ -24,7 +24,7 @@ pipeline {
         stage("Sonarqube Analysis "){
             steps{
                 withSonarQubeEnv('SonarQubeServer') {
-                    sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.url=http://localhost:9000/ -Dsonar.login=squ_7d32eb0bbd7abf76e34409b8cc53c24a40000670 -Dsonar.projectName=ToDoFastAPI \
+                    sh ''' $SCANNER_HOME/bin/SonarQubeScanner -Dsonar.url=http://localhost:9000/ -Dsonar.login=squ_7d32eb0bbd7abf76e34409b8cc53c24a40000670 -Dsonar.projectName=ToDoFastAPI \
                     -Dsonar.java.binaries=. \
                     -Dsonar.projectKey=ToDoFastAPI '''
     
