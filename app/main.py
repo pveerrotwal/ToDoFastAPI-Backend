@@ -1,10 +1,10 @@
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List, Optional
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.requests import Request
 from pydantic import BaseModel
-import sqlite3
 
 app: FastAPI = FastAPI()
 
@@ -15,32 +15,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-class User(BaseModel):
-    username: str
-    password: str
-
-@app.post("/login/")
-async def login(user: User):
-    try:
-        conn = sqlite3.connect('database.db')
-        cursor = conn.cursor()
-        
-        # Vulnerable SQL query - susceptible to SQL injection
-        cursor.execute(f"SELECT * FROM users WHERE username='{user.username}' AND password='{user.password}'")
-        
-        # Fetch user data
-        user_data = cursor.fetchone()
-        
-        # Close connection
-        conn.close()
-        
-        if user_data:
-            return {"message": "Login successful"}
-        else:
-            return JSONResponse(status_code=401, content={"message": "Invalid credentials"})
-    except Exception as e:
-        return JSONResponse(status_code=500, content={"message": "Internal server error"})
-
 
 
 class TodoItem(BaseModel):
@@ -89,4 +63,3 @@ async def update_todo_item(item_id: int, todo_item: TodoItem):
         return await get_todos(message=f"Item #{item_id + 1} updated successfully")
     else:
         return JSONResponse(status_code=404, content={"message": "Item not found"})
-
