@@ -1,11 +1,10 @@
-
-from fastapi import FastAPI
+from fastapi import FastAPI, Form
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List, Optional
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.requests import Request
 from pydantic import BaseModel
-
+from typing import Optional
 app: FastAPI = FastAPI()
 
 app.add_middleware(
@@ -28,7 +27,10 @@ async def get_todos(message: str):
     return {"status": message,
             "items": todo_items}
 
-
+@app.post("/submit-form/")
+async def submit_form(username: str = Form(...), password: str = Form(...)):
+    return {"username": username, "password": password}
+    
 @app.post("/api/add", response_class=JSONResponse)
 async def add_todo_item(item: TodoItem):
     todo_items.append(item)
