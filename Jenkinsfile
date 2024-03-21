@@ -27,6 +27,7 @@ pipeline {
                 script {
                     // Get the path to SonarQube Scanner installation directory
                     def scannerHome = tool 'SonarQubeScanner';
+                    echo "SonarQube Scanner installation directory: ${scannerHome}"
                     
                     // Run SonarQube Scanner
                     withSonarQubeEnv('SonarQubeServer') {
