@@ -5,6 +5,10 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.requests import Request
 from pydantic import BaseModel
 import requests
+from pathlib import Path
+
+from fastapi_spammer_protection import SpammerProtection
+
 # The URL of the FastAPI application endpoint
 url = "http://127.0.0.1:8082/submit-form/"
 
@@ -25,7 +29,7 @@ response = requests.post(url, data=data, headers={"Content-Type": content_type})
 print(response.text)
 
 app: FastAPI = FastAPI()
-
+app.add_middleware(SpammerProtection(Path('./banlist.txt')))
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
