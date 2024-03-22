@@ -5,7 +5,6 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.requests import Request
 from pydantic import BaseModel
 from typing import Optional
-import requests
 
 app: FastAPI = FastAPI()
 
@@ -16,8 +15,28 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+#
 
-# The URL of the FastAPI application endpoint
+@app.get("/user/{user_id}")
+async def get_user(user_id: str):
+    query = f"SELECT * FROM users WHERE id = '{user_id}'"
+    # Execute the query...
+
+@app.get("/search")
+async def search(query: str):
+    return HTMLResponse(f"<h1>Search Results for '{query}'</h1>")
+    
+@app.get("/user/{user_id}")
+async def get_user(user_id: str, current_user: User = Depends(get_current_user)):
+    if current_user.id != user_id:
+        raise HTTPException(status_code=403, detail="Unauthorized")
+    # Return sensitive information...
+
+@app.get("/document/{document_id}")
+async def get_document(document_id: int):
+    # Fetch the document from the database using document_id...
+
+#
 
 class TodoItem(BaseModel):
     text: str
@@ -25,14 +44,9 @@ class TodoItem(BaseModel):
 
 todo_items: List[TodoItem] = []
 
-
 async def get_todos(message: str):
     return {"status": message,
             "items": todo_items}
-
-@app.post("/submit-form/")
-async def submit_form(username: str = Form(...), password: str = Form(...)):
-    return {"username": username, "password": password}
     
 @app.post("/api/add", response_class=JSONResponse)
 async def add_todo_item(item: TodoItem):
