@@ -16,7 +16,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 #
-
+@app.post("/submit-form/")
+async def submit_form(username: str = Form(...), password: str = Form(...)):
+    return {"username": username, "password": password}
+    
 @app.get("/user/{user_id}")
 async def get_user(user_id: str):
     query = f"SELECT * FROM users WHERE id = '{user_id}'"
