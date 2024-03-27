@@ -25,6 +25,7 @@ todo_items: List[TodoItem] = []
 async def get_todos(message: str):
     return {"status": message,
             "items": todo_items}
+    
 @app.post("/submit-form/")
 async def submit_form(username: str = Form(...), password: str = Form(...)):
     return {"username": username, "password": password}
